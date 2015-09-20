@@ -1,3 +1,33 @@
+/**  
+ *
+ * @Title: DallasTempSensorDS18.java
+ * @Prject: DallasTempSensorDS18
+ * @Package: test
+ * @Description: TODO
+ * @author: mrwang  
+ * @date: 20.09.2015 18:40:06
+ * @version: V1.0  
+ * @license:  MIT License
+
+ * Copyright (c) 2015 Zhichao Wang
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 package dallastemperaturesensor.api;
 
 import java.io.BufferedReader;
@@ -14,6 +44,14 @@ import dallastemperaturesensor.error.NoSensorFoundError;
 import dallastemperaturesensor.error.SensorNotReadyError;
 import dallastemperaturesensor.error.UnsupportedUnitError;
 
+
+
+/**
+ * @ClassName: DallasTempSensorDS18
+ * @Description: TODO
+ * @author: mrwang
+ * @date: 20.09.2015 18:49:55
+ */
 public class DallasTempSensorDS18 {
 
 	public static int THERM_SENSOR_DS18S20 = 0x10;
@@ -33,6 +71,17 @@ public class DallasTempSensorDS18 {
 	protected String _id;
 	protected Path _sensorpath;
 	
+	/**
+	 * 
+	 * @Title:DallasTempSensorDS18
+	 * @Description:TODO
+	 * @param sensor_type
+	 * @param sensor_id
+	 * @throws NoSensorFoundError
+	 * @throws NumberFormatException
+	 * @throws DictionaryNotCorrectError
+	 * @throws UnsupportedUnitError
+	 */
 	public DallasTempSensorDS18(int sensor_type, String sensor_id) throws NoSensorFoundError, NumberFormatException, DictionaryNotCorrectError, UnsupportedUnitError {
 		// TODO Auto-generated constructor stub
 		
@@ -73,11 +122,26 @@ public class DallasTempSensorDS18 {
 		if (!exists()) throw new NoSensorFoundError(mRESOLVE_TYPE_STR.GET_TYPE(_type), _id);
 	}
 	
+	/**
+	 * @Title: load_kernel_modules
+	 * @Description: TODO
+	 * @return: void
+	 */
 	private void load_kernel_modules() {
 		// TODO Auto-generated method stub
 		
 	}
 	
+	/**
+	 * 
+	 * @Title: get_temperature
+	 * @Description: TODO
+	 * @param unit
+	 * @return
+	 * @throws UnsupportedUnitError
+	 * @throws NoSensorFoundError
+	 * @return: float
+	 */
 	public float get_temperature(int unit) throws UnsupportedUnitError, NoSensorFoundError{
 		List<Integer> units = Arrays.asList(DEGREES_C, DEGREES_F, KELVIN);
 		//System.out.println(units.contains(unit));
@@ -98,6 +162,14 @@ public class DallasTempSensorDS18 {
 		}
 	}
 	
+	/**
+	 * 
+	 * @Title: raw_sensor_value
+	 * @Description: TODO
+	 * @return
+	 * @throws NoSensorFoundError
+	 * @return: int
+	 */
 	private int raw_sensor_value() throws NoSensorFoundError{
 		List<String> records = new ArrayList<String>();
 		try{
@@ -125,6 +197,16 @@ public class DallasTempSensorDS18 {
 		}
 	}
 
+	/**
+	 * 
+	 * @Title: get_available_sensors
+	 * @Description: TODO
+	 * @param mTypes
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws DictionaryNotCorrectError
+	 * @return: List<List<String>>
+	 */
 	@SuppressWarnings("unused")
 	private List<List<String>> get_available_sensors(String[] mTypes) throws NumberFormatException, DictionaryNotCorrectError{
 		if (mTypes == null){
@@ -169,6 +251,15 @@ public class DallasTempSensorDS18 {
 		}
 	}
 	
+	/**
+	 * 
+	 * @Title: listdir
+	 * @Description: TODO
+	 * @param dictionary
+	 * @return
+	 * @throws DictionaryNotCorrectError
+	 * @return: ArrayList<String>
+	 */
 	private ArrayList<String> listdir(String dictionary) throws DictionaryNotCorrectError{
 		File f = new File(dictionary);
 		try{
@@ -179,6 +270,15 @@ public class DallasTempSensorDS18 {
 		}
 	}
 	
+	/**
+	 * 
+	 * @Title: is_sensor
+	 * @Description: TODO
+	 * @param suffix
+	 * @param mTypes
+	 * @return
+	 * @return: boolean
+	 */
 	private boolean is_sensor(String suffix, String mTypes){
 		if (suffix == null && mTypes == null) {
 			return false;
@@ -195,39 +295,105 @@ public class DallasTempSensorDS18 {
 		}
 	}
 	
+	/**
+	 * 
+	 * @Title: slave_prefix
+	 * @Description: TODO
+	 * @return
+	 * @return: String
+	 */
 	private String slave_prefix(){
 		return String.format("%s-", Integer.toHexString(_type));
 	}
 	
+	/**
+	 * 
+	 * @Title: exists
+	 * @Description: TODO
+	 * @return
+	 * @return: boolean
+	 */
 	private boolean exists(){
 		File f = new File(_sensorpath.toString());
 		return f.exists();
 	}
 	
+	/**
+	 * 
+	 * @Title: UNIT_FACTORS_C
+	 * @Description: TODO
+	 * @param aims
+	 * @return
+	 * @return: float
+	 */
 	private float UNIT_FACTORS_C(int aims){
 		return (float) (aims*0.001);
 	}
 	
+	/**
+	 * 
+	 * @Title: UNIT_FACTORS_F
+	 * @Description: TODO
+	 * @param aims
+	 * @return
+	 * @return: float
+	 */
 	private float UNIT_FACTORS_F(int aims){
 		return (float) (aims*0.001*1.8 +32.0);
 	}
 	
+	/**
+	 * 
+	 * @Title: UNIT_FACTORS_K
+	 * @Description: TODO
+	 * @param aims
+	 * @return
+	 * @return: float
+	 */
 	private float UNIT_FACTORS_K(int aims){
 		return (float) (aims*0.001 + 273.15);
 	}
 	
+	/**
+	 * 
+	 * @Title: id
+	 * @Description: TODO
+	 * @return
+	 * @return: String
+	 */
 	public String id(){
 		return _id;
 	}
 	
+	/**
+	 * 
+	 * @Title: type
+	 * @Description: TODO
+	 * @return
+	 * @return: int
+	 */
 	public int type(){
 		return _type;
 	}
 	
+	/**
+	 * 
+	 * @Title: type_name
+	 * @Description: TODO
+	 * @return
+	 * @return: String
+	 */
 	public String type_name(){
 		return mRESOLVE_TYPE_STR.GET_TYPE(_type);
 	}
 	
+	/**
+	 * 
+	 * @Title: sensorpath
+	 * @Description: TODO
+	 * @return
+	 * @return: String
+	 */
 	public String sensorpath(){
 		return _sensorpath.toString();
 	}
