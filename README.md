@@ -32,9 +32,11 @@ This java project provide a api and represents a temperature sensor of type w1-t
 > Java Doc:
 >> - javadoc
 
-> Java Archive:
+> Java archive file (not runnable jar):
 >> - DallasTempSensorDS18.jar
- 
+>> - DallasTempSensorDS18_release_v1_5.jar
+>> - DallasTempSensorDS18_test_v1_4.jar (for Test)
+
 ### Dependent library:
 
 there is no specific dependent manner.
@@ -62,7 +64,7 @@ System.out.println(mSensor.get_temperature(DallasTempSensorDS18.DEGREES_C));
 
 
 ### Version
-V1.0
+V1.4
 
 ### Installation
 
@@ -74,8 +76,7 @@ $ git clone [git-repo-url] DallasTempSensorDS18
 
  - Write Tests
  - Add Code Comments
- - function: get_temperatures()
- - function: load_kernel_modules()
+ - Test code
 
 License
 ----
