@@ -32,7 +32,7 @@ This java project provide a api and represents a temperature sensor of type w1-t
 > Java Doc:
 >> - javadoc
 
-> Java Archive:
+> Java Archive File (not runnable):
 >> - DallasTempSensorDS18.jar
  
 ### Dependent library:
