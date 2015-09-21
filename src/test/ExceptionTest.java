@@ -31,6 +31,8 @@
 
 package test;
 
+import java.io.IOException;
+
 import dallastemperaturesensor.api.DallasTempSensorDS18;
 import dallastemperaturesensor.api.RESOLVE_TYPE_STR;
 import dallastemperaturesensor.error.DictionaryNotCorrectError;
@@ -63,9 +65,9 @@ public class ExceptionTest {
 			throw new KernelModuleLoadError();
 		}
 	}
-	public static void main(String[] args) throws KernelModuleLoadError, NoSensorFoundError, NumberFormatException, DictionaryNotCorrectError, UnsupportedUnitError {
+	public static void main(String[] args) throws KernelModuleLoadError, NoSensorFoundError, NumberFormatException, DictionaryNotCorrectError, UnsupportedUnitError, IOException {
 		// TODO Auto-generated method stub
 		DallasTempSensorDS18 mSensor = new DallasTempSensorDS18(0x28, null);
-		System.out.println(mSensor.get_temperature(DallasTempSensorDS18.DEGREES_C));
+		System.out.println(mSensor.get_temperatures(new int[] {DallasTempSensorDS18.DEGREES_C, DallasTempSensorDS18.DEGREES_F}));
 	}
 }

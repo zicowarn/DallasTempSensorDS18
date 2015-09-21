@@ -6,7 +6,7 @@
  * @Description: TODO
  * @author: mrwang  
  * @date: 20.09.2015 18:40:06
- * @version: V1.0  
+ * @version: V1.1  
  * @license:  MIT License
 
  * Copyright (c) 2015 Zhichao Wang
@@ -33,6 +33,7 @@ package dallastemperaturesensor.api;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import dallastemperaturesensor.error.DictionaryNotCorrectError;
+import dallastemperaturesensor.error.KernelModuleLoadError;
 import dallastemperaturesensor.error.NoSensorFoundError;
 import dallastemperaturesensor.error.SensorNotReadyError;
 import dallastemperaturesensor.error.UnsupportedUnitError;
@@ -60,7 +62,7 @@ public class DallasTempSensorDS18 {
 	public static int DEGREES_C = 0x01;
 	public static int DEGREES_F = 0x02;
 	public static int KELVIN = 0x03;
-	public String BASE_DIRECTORY = "./sys/bus/w1/devices";
+	public String BASE_DIRECTORY = "/sys/bus/w1/devices";
 	public String SLAVE_FILE = "w1_slave";
 	public int RETRY_ATTEMPS = 10;
 	public float RETRY_DELAY_SECONDS = (float) (1.0 / RETRY_ATTEMPS);
@@ -81,8 +83,10 @@ public class DallasTempSensorDS18 {
 	 * @throws NumberFormatException
 	 * @throws DictionaryNotCorrectError
 	 * @throws UnsupportedUnitError
+	 * @throws IOException 
+	 * @throws KernelModuleLoadError 
 	 */
-	public DallasTempSensorDS18(int sensor_type, String sensor_id) throws NoSensorFoundError, NumberFormatException, DictionaryNotCorrectError, UnsupportedUnitError {
+	public DallasTempSensorDS18(int sensor_type, String sensor_id) throws NoSensorFoundError, NumberFormatException, DictionaryNotCorrectError, UnsupportedUnitError, KernelModuleLoadError, IOException {
 		// TODO Auto-generated constructor stub
 		
 		//TODO try to load kernel modules
@@ -126,10 +130,35 @@ public class DallasTempSensorDS18 {
 	 * @Title: load_kernel_modules
 	 * @Description: TODO
 	 * @return: void
+	 * @throws IOException 
+	 * @throws KernelModuleLoadError 
 	 */
-	private void load_kernel_modules() {
+	private void load_kernel_modules() throws IOException, KernelModuleLoadError {
 		// TODO Auto-generated method stub
-		
+		File f = new File(BASE_DIRECTORY);
+		if (!f.isDirectory()){
+			// Get runtime
+	        java.lang.Runtime rt = java.lang.Runtime.getRuntime();
+	        // Start a new process: UNIX command ls
+	        @SuppressWarnings("unused")
+			java.lang.Process p = rt.exec("modprobe w1-gpio");
+	        @SuppressWarnings("unused")
+			java.lang.Process p1 = rt.exec("modprobe w1-therm");
+		}
+		else{}
+		for (int i=0; i<=RETRY_ATTEMPS; i++){
+			if(f.isDirectory()){
+				break;
+			}
+			else{
+				try {
+				    Thread.sleep((long) RETRY_DELAY_SECONDS);                 //1000 milliseconds is one second.
+				} catch(InterruptedException ex) {
+				    Thread.currentThread().interrupt();
+				}
+			}
+		}
+		if (!f.isDirectory()) throw new KernelModuleLoadError();
 	}
 	
 	/**
@@ -163,6 +192,63 @@ public class DallasTempSensorDS18 {
 	}
 	
 	/**
+	 * @Title: get_temperatures
+	 * @Description: TODO
+	 * @return
+	 * @throws NoSensorFoundError
+	 */
+	public List<Float> get_temperatures() throws NoSensorFoundError{
+		List<Integer> units = Arrays.asList(DEGREES_C, DEGREES_F, KELVIN);
+		List<Float> rts = new ArrayList<Float>();
+		//System.out.println(units.contains(unit));
+		int target = raw_sensor_value();
+		for (int unit : units){
+			
+			if (unit == DEGREES_C){
+				rts.add(UNIT_FACTORS_C(target));
+			}
+			else if (unit == DEGREES_F){
+				rts.add(UNIT_FACTORS_F(target));
+			}
+			else{
+				rts.add(UNIT_FACTORS_K(target));
+			}
+		}
+		return rts;
+	}
+	
+	/**
+	 * @Title: get_temperatures
+	 * @Description: TODO
+	 * @return
+	 * @throws UnsupportedUnitError
+	 * @throws NoSensorFoundError
+	 */
+	public List<Float> get_temperatures(int[] in_units) throws UnsupportedUnitError, NoSensorFoundError{
+		List<Integer> units = Arrays.asList(DEGREES_C, DEGREES_F, KELVIN);
+		List<Float> rts = new ArrayList<Float>();
+		//System.out.println(units.contains(unit));
+		int target = raw_sensor_value();
+		for (int unit : in_units){
+			if (units.contains(unit)){
+				if (unit == DEGREES_C){
+					rts.add(UNIT_FACTORS_C(target));
+				}
+				else if (unit == DEGREES_F){
+					rts.add(UNIT_FACTORS_F(target));
+				}
+				else{
+					rts.add(UNIT_FACTORS_K(target));
+				}
+			}
+			else{
+				throw new UnsupportedUnitError();
+			}
+		}
+		return rts;
+	}
+	
+	/**
 	 * 
 	 * @Title: raw_sensor_value
 	 * @Description: TODO
@@ -173,7 +259,6 @@ public class DallasTempSensorDS18 {
 	private int raw_sensor_value() throws NoSensorFoundError{
 		List<String> records = new ArrayList<String>();
 		try{
-			
 			BufferedReader reader = new BufferedReader(new FileReader(_sensorpath.toString()));
 		    String line;
 		    while ((line = reader.readLine()) != null)
