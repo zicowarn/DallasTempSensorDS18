@@ -50,6 +50,7 @@ there is no specific dependent manner.
 - java.util.Arrays;
 - java.util.List;
 
+
 -----------------------------------------------------------------
 
 
@@ -71,6 +72,7 @@ V1.4
 ```sh
 $ git clone [git-repo-url] DallasTempSensorDS18
 ```
+
 
 ### Todos
 
