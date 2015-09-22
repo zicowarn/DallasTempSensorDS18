@@ -292,8 +292,7 @@ public class DallasTempSensorDS18 {
 	 * @throws DictionaryNotCorrectError
 	 * @return: List<List<String>>
 	 */
-	@SuppressWarnings("unused")
-	private List<List<String>> get_available_sensors(String[] mTypes) throws NumberFormatException, DictionaryNotCorrectError{
+	public List<List<String>> get_available_sensors(String[] mTypes) throws NumberFormatException, DictionaryNotCorrectError{
 		if (mTypes == null){
 			List<List<String>> mListOfAvaiable = new ArrayList<List<String>>();
 			List<String> mListOfAvaiable_type = new ArrayList<String>(1);
@@ -306,12 +305,7 @@ public class DallasTempSensorDS18 {
 			}
 			mListOfAvaiable.add(mListOfAvaiable_type);
 			mListOfAvaiable.add(mListOfAvaiable_id);
-			if (mListOfAvaiable != null){
-				return mListOfAvaiable;
-			}
-			else{
-				return null;
-			}
+			return mListOfAvaiable;
 		}
 		else{
 			List<List<String>> mListOfAvaiable = new ArrayList<List<String>>();
@@ -327,12 +321,7 @@ public class DallasTempSensorDS18 {
 			}
 			mListOfAvaiable.add(mListOfAvaiable_type);
 			mListOfAvaiable.add(mListOfAvaiable_id);
-			if (mListOfAvaiable != null){
-				return mListOfAvaiable;
-			}
-			else{
-				return null;
-			}
+			return mListOfAvaiable;
 		}
 	}
 	
